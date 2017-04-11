@@ -18,48 +18,57 @@ args = parser.parse_args()
 
 db = starbucks_db()
 
+ORDER_NOT_FOUND = {
+	'status': 'error',
+	'message': 'Order not found.'
+	}
+PAID = {
+	'status': 'PAID',
+	'message': 'Payment succeeded'
+}
+
+ORDER_ALREADY_PAID = {
+	'status':'PAID',
+	'message': 'Order Already Paid'
+}
+
 app = Flask(__name__)
 
 @app.route("/v3/starbucks/order", methods=['POST'])
-def ini_order():
+def initial_order():
 	if request.is_json:
-		data = request.data
-		db.addOrder(data)
-		return jsonify({'message':'succeed'})
+		order = request.json
+		print type(order)
+		rep = db.addOrder(order)
+		return jsonify(rep)
 	else:
 		abort(404)
 
 @app.route("/v3/starbucks/orders", methods=['GET'])
 def orders():
-	re = {}
-	re['request'] = request.method
-	if request.method == 'GET':
-		return jsonify(re)
+	return jsonify(db.findAllOrders())
 
-@app.route("/v3/starbucks/order/<order_id>", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route("/v3/starbucks/order/<order_id>", methods=['GET', 'PUT', 'DELETE'])
 def order(order_id):
-	re = {}
-	re['request'] = request.method
-	re['order_id'] = order_id
+	if not db.isOrderExist(order_id):
+		return jsonify(ORDER_NOT_FOUND)
+	elif db.isPaid(order_id) && request.method != 'GET':
+		return jsonify(ORDER_ALREADY_PAID)
+
 	if request.method == 'GET':
-		return jsonify(re)
-	elif request.method == 'POST':
-		
-		return jsonify(re)
+		return jsonify(db.findOrder(order_id))
 	elif request.method == 'PUT':
-		return jsonify(re)
+		return jsonify(db.updateOrder(request.json, order_id))
 	elif request.method == 'DELETE':
-		return jsonify(re)
-	else:
-		abort(404)
+		return jsonify(db.deleteOrder(order_id))
 
 @app.route("/v3/starbucks/order/<order_id>/pay", methods=['POST'])
 def pay(order_id):
-	re = {}
-	re['request'] = request.method
-	re['order_id'] = order_id
-	if request.method == 'POST':
-		return jsonify(re)
+	if db.isPaid(order_id):
+		return jsonify(ORDER_ALREADY_PAID)
+	else:
+		db.payOrder(order_id)
+		return jsonify(PAID)
 
 
 if __name__ == "__main__":

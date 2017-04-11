@@ -1,0 +1,64 @@
+{
+  "id": "730e8b56-e24d-4f8b-b8b2-539a9d0efa78",
+  "location": "take-out",
+  "items": [
+    {
+      "qty": 1,
+      "name": "mocca",
+      "milk": "whole",
+      "size": "large"
+    }
+  ],
+  "links": {
+    "payment": "http://127.0.0.1:9090/v3/starbucks/order/730e8b56-e24d-4f8b-b8b2-539a9d0efa78/pay",
+    "order": "http://127.0.0.1:9090/v3/starbucks/order/730e8b56-e24d-4f8b-b8b2-539a9d0efa78"
+  },
+  "status": "PLACED",
+  "message": "Order has been placed."
+}
+
+{
+  "status": "error",
+  "message": "Order not found."
+}
+
+{
+  "id": "c3def603-0f7c-4751-8572-1891937cf89c",
+  "location": "take-out",
+  "items": [
+    {
+      "qty": 2,
+      "name": "latte",
+      "milk": "one percent",
+      "size": "small"
+    }
+  ],
+  "links": {
+    "payment": "http://127.0.0.1:9090/v3/starbucks/order/c3def603-0f7c-4751-8572-1891937cf89c/056e8fb8-17ae-4781-8423-f471222321ba/pay",
+    "order": "http://127.0.0.1:9090/v3/starbucks/order/c3def603-0f7c-4751-8572-1891937cf89c/056e8fb8-17ae-4781-8423-f471222321ba"
+  },
+  "status": "PLACED",
+  "message": "Order has been placed."
+}
+
+
+{
+  "status": "PAID",
+  "message": "Payment Succeeded"
+}
+
+
+{
+  "status": "error",
+  "message": "Order Payment Rejected"
+}
+
+{
+  "status": "error",
+  "message": "Order Update Rejected."
+}
+
+{
+  "status": "error",
+  "message": "Order Cancelling Rejected."
+}
