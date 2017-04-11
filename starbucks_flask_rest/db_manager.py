@@ -3,18 +3,13 @@ from boto.exception import JSONResponseError
 import uuid 
 
 class starbucks_db(object):
-	def __init__(self, mode='local', endpoint=None, port=None):
+	def __init__(self, mode='local', endpoint='http://127.0.0.1', port=8000):
 		self.db = None
 		self.table = None
-		self.endpoint_url = ""
-
 		if mode == 'local':
-			self.endpoint_url = "http://localhost:8000"
-		elif mode == 'service':
+			self.endpoint_url = 'http://127.0.0.1:8000'
+		elif mode == 'server':
 			self.endpoint_url = endpoint+":"+str(port)
-		else:
-			raise Exception("Invalid arguments, please refer to usage.")
-
 		self.db = boto3.resource('dynamodb', endpoint_url = self.endpoint_url)
 		self.setupDB()
 	

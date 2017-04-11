@@ -7,29 +7,40 @@ import json
 parser = argparse.ArgumentParser(description='Run the starbucks REST API', prog='starbucks.py')
 parser.add_argument('--mode', help='Whether to connect to a DynamoDB service endpoint, or to connect to DynamoDB Local. In local mode, no other configuration ' \
                     'is required. In service mode, AWS credentials and endpoint information must be provided either on the command-line or through the config file.',
-                    choices=['local', 'service'], default='service')
+                    choices=['local', 'service'], default='local')
 parser.add_argument('--endpoint', help='An endpoint to connect to (the host name - without the http/https and without the port). ' \
                     'When using DynamoDB Local, defaults to localhost. If the USE_EC2_INSTANCE_METADATA environment variable is set, reads the instance ' \
                     'region using the EC2 instance metadata service, and contacts DynamoDB in that region.')
 parser.add_argument('--port', help='The port of DynamoDB Local endpoint to connect to.  Defaults to 8000', type=int)
-parser.add_argument('--serverPort', help='The port for this Flask web server to listen on.  Defaults to 5000 or whatever is in the config file. If the SERVER_PORT ' \
+parser.add_argument('--serverPort', help='The port for this Flask web server to listen on.  Defaults to 9090 or whatever is in the config file. If the SERVER_PORT ' \
                     'environment variable is set, uses that instead.', type=int)
 args = parser.parse_args()
 
-db = starbucks_db()
+db = starbucks_db(mode=args.mode, endpoint=args.endpoint, port=args.port)
+
+NOT_JSON = {
+	'status': 'error',
+	'message': 'Must be JSON.'
+}
 
 ORDER_NOT_FOUND = {
 	'status': 'error',
 	'message': 'Order not found.'
-	}
+}
+
 PAID = {
 	'status': 'PAID',
-	'message': 'Payment succeeded'
+	'message': 'Payment succeeded.'
 }
 
 ORDER_ALREADY_PAID = {
 	'status':'PAID',
-	'message': 'Order Already Paid'
+	'message': 'Order Already Paid.'
+}
+
+DELETE_OK = {
+	'status':'DELETED',
+	'message': 'Successful Deletion.'
 }
 
 app = Flask(__name__)
@@ -42,7 +53,7 @@ def initial_order():
 		rep = db.addOrder(order)
 		return jsonify(rep)
 	else:
-		abort(404)
+		return jsonify(NOT_JSON)
 
 @app.route("/v3/starbucks/orders", methods=['GET'])
 def orders():
@@ -52,7 +63,7 @@ def orders():
 def order(order_id):
 	if not db.isOrderExist(order_id):
 		return jsonify(ORDER_NOT_FOUND)
-	elif db.isPaid(order_id) && request.method != 'GET':
+	elif db.isPaid(order_id) and request.method != 'GET':
 		return jsonify(ORDER_ALREADY_PAID)
 
 	if request.method == 'GET':
@@ -60,7 +71,8 @@ def order(order_id):
 	elif request.method == 'PUT':
 		return jsonify(db.updateOrder(request.json, order_id))
 	elif request.method == 'DELETE':
-		return jsonify(db.deleteOrder(order_id))
+		db.deleteOrder(order_id)
+		return jsonify(DELETE_OK)
 
 @app.route("/v3/starbucks/order/<order_id>/pay", methods=['POST'])
 def pay(order_id):
