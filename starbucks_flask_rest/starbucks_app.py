@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, make_response, request
+from db_manager import *
 import argparse
+import json
 
 # reference aws TicTacToe sample app
 parser = argparse.ArgumentParser(description='Run the starbucks REST API', prog='starbucks.py')
@@ -14,7 +16,18 @@ parser.add_argument('--serverPort', help='The port for this Flask web server to 
                     'environment variable is set, uses that instead.', type=int)
 args = parser.parse_args()
 
+db = starbucks_db()
+
 app = Flask(__name__)
+
+@app.route("/v3/starbucks/order", methods=['POST'])
+def ini_order():
+	if request.is_json:
+		data = request.data
+		db.addOrder(data)
+		return jsonify({'message':'succeed'})
+	else:
+		abort(404)
 
 @app.route("/v3/starbucks/orders", methods=['GET'])
 def orders():
@@ -31,6 +44,7 @@ def order(order_id):
 	if request.method == 'GET':
 		return jsonify(re)
 	elif request.method == 'POST':
+		
 		return jsonify(re)
 	elif request.method == 'PUT':
 		return jsonify(re)
@@ -49,4 +63,4 @@ def pay(order_id):
 
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(debug = True, port=args.serverPort)
