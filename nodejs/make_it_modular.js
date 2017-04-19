@@ -1,3 +1,7 @@
+/*
+reference: http://stackoverflow.com/questions/35542194/learnyounode-6-make-it-modular-correct-results-and-throwing-error-at-the-same
+*/
+
 var path = require('path');
 var mymodule = require('./module/mymodule');
 var dir = process.argv[2];
