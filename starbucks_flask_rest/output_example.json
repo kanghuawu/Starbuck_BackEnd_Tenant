@@ -1,4 +1,15 @@
 {
+  "location": "take-out",
+  "items": [
+    {
+      "qty": 2,
+      "name": "test",
+      "milk": "whole",
+      "size": "large"
+    }
+  ]
+}
+{
   "id": "730e8b56-e24d-4f8b-b8b2-539a9d0efa78",
   "location": "take-out",
   "items": [

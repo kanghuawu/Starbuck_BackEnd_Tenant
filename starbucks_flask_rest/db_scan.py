@@ -1,5 +1,10 @@
 import boto3
 import simplejson as json
+import argparse
+
+parser = argparse.ArgumentParser(description='Scan or delete DB')
+parser.add_argument('-d', help='Clean database', action='store_true')
+args = parser.parse_args()
 
 db = boto3.resource('dynamodb', endpoint_url = "http://localhost:8000")
 
@@ -11,6 +16,8 @@ items = response['Items']
 
 print json.dumps(items, indent = 4)
 
-response = table.get_item(Key={'id':'1'})
-
-item = response.get('Item')
+if(args.d):
+	print 'Deleting....'
+	for it in items:
+		print json.dumps(it['id'], indent = 4)
+		table.delete_item(Key={'id':it['id']})

@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, make_response, request
 from db_manager import *
 import argparse
-import json
+import simplejson as json
+# import json
 
 # reference aws TicTacToe sample app
 parser = argparse.ArgumentParser(description='Run the starbucks REST API', prog='starbucks.py')
@@ -13,7 +14,7 @@ parser.add_argument('--endpoint', help='An endpoint to connect to (the host name
                     'region using the EC2 instance metadata service, and contacts DynamoDB in that region.')
 parser.add_argument('--port', help='The port of DynamoDB Local endpoint to connect to.  Defaults to 8000', type=int)
 parser.add_argument('--serverPort', help='The port for this Flask web server to listen on.  Defaults to 9090 or whatever is in the config file. If the SERVER_PORT ' \
-                    'environment variable is set, uses that instead.', type=int)
+                    'environment variable is set, uses that instead.', type=int, default=9090)
 args = parser.parse_args()
 
 db = starbucks_db(mode=args.mode, endpoint=args.endpoint, port=args.port)
@@ -47,9 +48,11 @@ app = Flask(__name__)
 
 @app.route("/v3/starbucks/order", methods=['POST'])
 def initial_order():
+	print 'Placing order...'
+	print json.dumps(request.json, indent=2)
 	if request.is_json:
 		order = request.json
-		print type(order)
+		# print type(order)
 		rep = db.addOrder(order)
 		return jsonify(rep)
 	else:
