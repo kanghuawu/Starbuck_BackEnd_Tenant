@@ -3,14 +3,14 @@ from boto.exception import JSONResponseError
 import uuid 
 
 class starbucks_db(object):
-	def __init__(self, mode='local', endpoint='http://127.0.0.1', port=8000):
+	def __init__(self, mode='local', endpoint='http://127.0.0.1:9090', port=8000):
 		self.db = None
 		self.table = None
+		self.endpoint = endpoint
 		if mode == 'local':
-			self.endpoint_url = 'http://127.0.0.1:8000'
+			self.db = boto3.resource('dynamodb', endpoint_url = 'http://127.0.0.1:'+str(port))
 		elif mode == 'server':
-			self.endpoint_url = endpoint+":"+str(port)
-		self.db = boto3.resource('dynamodb', endpoint_url = self.endpoint_url)
+			self.db = boto3.resource('dynamodb', region_name='us-west-1')
 		self.setupDB()
 	
 	def setupDB(self):
@@ -33,7 +33,7 @@ class starbucks_db(object):
 					'WriteCapacityUnits': 5
 					}
 				)
-		
+			table.meta.client.get_waiter('table_exists').wait(TableName='starbucks')
 		except Exception as in_use:
 			try:
 				self.table = self.db.Table('starbucks')
@@ -49,8 +49,8 @@ class starbucks_db(object):
 			'location': order["location"],
 			'items': order["items"],
 			'links':
-			{'payment': self.endpoint_url + "/v3/starbucks/order/" + order_id + "/pay",
-			'order': self.endpoint_url + "/v3/starbucks/order/" + order_id
+			{'payment': self.endpoint + "/v3/starbucks/order/" + order_id + "/pay",
+			'order': self.endpoint + "/v3/starbucks/order/" + order_id
 			},
 			'status':'PLACED',
 			'message':'Order has been placed.'}

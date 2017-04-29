@@ -1,11 +1,11 @@
 import boto3
 
 
-dynamodb = boto3.resource('dynamodb', endpoint_url = "http://localhost:8000")
+dynamodb = boto3.resource('dynamodb', region_name='us-west-1')
 
 # Create the DynamoDB table.
-table = dynamodb.Table('users')
-if table == None:
+
+try:
 	table = dynamodb.create_table(
 	    TableName='users',
 	    KeySchema=[
@@ -34,9 +34,14 @@ if table == None:
 	        'WriteCapacityUnits': 5
 	    }
 	)
-
 	# Wait until the table exists.
 	table.meta.client.get_waiter('table_exists').wait(TableName='users')
+except Exception as in_use:
+	try:
+		table = dynamodb.Table('users')
+	except Exception as e:
+		print("Starbucks Table doesn't exist.")
+	
 
 # Print out some data about the table.
 print(table.item_count)
