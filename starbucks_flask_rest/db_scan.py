@@ -4,10 +4,13 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Scan or delete DB')
 parser.add_argument('-d', help='Clean database', action='store_true')
+parser.add_argument('--service', help='Connect to localhost use local or connect to aws use server', choices=['local', 'server'], default='local')
 args = parser.parse_args()
 
-db = boto3.resource('dynamodb', endpoint_url = "http://localhost:8000")
-
+if args.service == 'local':
+	db = boto3.resource('dynamodb', endpoint_url = 'http://localhost:8000', region_name='us-west-1')
+else: 
+	db = boto3.resource('dynamodb', region_name='us-west-1')
 table = db.Table('starbucks')
 
 response = table.scan()

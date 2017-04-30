@@ -11,7 +11,7 @@ docker-clean:
 	docker rmi mystarbucks
 
 docker-run:
-	docker run --name mystarbucks -td mystarbucks
+	docker run --name -p 9090:9090 mystarbucks -td mystarbucks
 	docker ps
 
 docker-run-host:

@@ -8,7 +8,7 @@ class starbucks_db(object):
 		self.table = None
 		self.endpoint = endpoint
 		if mode == 'local':
-			self.db = boto3.resource('dynamodb', endpoint_url = 'http://127.0.0.1:'+str(port))
+			self.db = boto3.resource('dynamodb', endpoint_url = 'http://127.0.0.1:'+str(port), region_name='us-west-1')
 		elif mode == 'server':
 			self.db = boto3.resource('dynamodb', region_name='us-west-1')
 		self.setupDB()

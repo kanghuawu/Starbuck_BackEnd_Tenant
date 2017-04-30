@@ -43,7 +43,7 @@ DELETE_OK = {
 
 app = Flask(__name__)
 
-@app.route("/v3/starbucks/order", methods=['POST'])
+@app.route("/SF/starbucks/order", methods=['POST'])
 def initial_order():
 	print 'Placing order...'
 	print json.dumps(request.json, indent=2)
@@ -55,12 +55,11 @@ def initial_order():
 	else:
 		return jsonify(NOT_JSON)
 
-@app.route("/v3/starbucks/orders", methods=['GET'])
+@app.route("/SF/starbucks/orders", methods=['GET'])
 def orders():
-	print request
 	return jsonify(db.findAllOrders())
 
-@app.route("/v3/starbucks/order/<order_id>", methods=['GET', 'PUT', 'DELETE'])
+@app.route("/SF/starbucks/order/<order_id>", methods=['GET', 'PUT', 'DELETE'])
 def order(order_id):
 	if not db.isOrderExist(order_id):
 		return jsonify(ORDER_NOT_FOUND)
@@ -68,15 +67,19 @@ def order(order_id):
 		return jsonify(ORDER_ALREADY_PAID)
 
 	if request.method == 'GET':
+		print 'Get order...'
 		return jsonify(db.findOrder(order_id))
 	elif request.method == 'PUT':
+		print 'Change order...'
 		return jsonify(db.updateOrder(request.json, order_id))
 	elif request.method == 'DELETE':
+		print 'Delete order...'
 		db.deleteOrder(order_id)
 		return jsonify(DELETE_OK)
 
-@app.route("/v3/starbucks/order/<order_id>/pay", methods=['POST'])
+@app.route("/SF/starbucks/order/<order_id>/pay", methods=['POST'])
 def pay(order_id):
+	print 'Pay order...'
 	if db.isPaid(order_id):
 		return jsonify(ORDER_ALREADY_PAID)
 	else:
