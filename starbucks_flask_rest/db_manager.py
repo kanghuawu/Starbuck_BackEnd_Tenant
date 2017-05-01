@@ -49,8 +49,8 @@ class starbucks_db(object):
 			'location': order["location"],
 			'items': order["items"],
 			'links':
-			{'payment': self.endpoint + "/v3/starbucks/order/" + order_id + "/pay",
-			'order': self.endpoint + "/v3/starbucks/order/" + order_id
+			{'payment': '/starbucks/order/' + order_id + '/pay',
+			'order': '/starbucks/order/' + order_id
 			},
 			'status':'PLACED',
 			'message':'Order has been placed.'}
