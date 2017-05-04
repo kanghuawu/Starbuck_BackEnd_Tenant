@@ -14,7 +14,7 @@ parser.add_argument('--mode', help='Whether to connect to a DynamoDB service end
 
 args = parser.parse_args()
 
-db = starbucks_db(mode=args.mode, port=args.port)
+db = starbucks_db(mode=args.mode, endpoint=args.endpoint, port=args.port)
 
 NOT_JSON = {
 	'status': 'error',
