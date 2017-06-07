@@ -14,8 +14,16 @@ go get github.com/streadway/amqp
 go run send.go
 '''
 
+http://192.168.99.100:8080
+
 login
 
 * username: guest
 
 * password: guest
+
+'''
+go get github.com/cloudfoundry-community/go-cfenv
+
+go get github.com/cloudnativego/drones-cmds/service
+'''
